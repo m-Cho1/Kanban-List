@@ -52,7 +52,7 @@ export default class AuthForm extends React.Component {
       },
       body: JSON.stringify(this.state)
     };
-    fetch(`api/auth/${action}`, req)
+    fetch(`/api/auth/${action}`, req)
       .then(res => res.json())
       .then(result => {
         if (action === 'sign-up') {

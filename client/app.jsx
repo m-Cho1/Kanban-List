@@ -5,7 +5,6 @@ import jwtDecode from 'jwt-decode';
 import AppContext from './lib/app-context';
 import parseRoute from './lib/parse-route';
 import Auth from './pages/auth';
-import NotFound from './pages/not-found';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -39,26 +38,30 @@ export default class App extends React.Component {
     this.setState({ user: null });
   }
 
-  renderPage() {
-    const { path } = this.state.route;
-    if (path === '') {
-      return <Home />;
-    }
-    if (path === 'sign-in' || path === 'sign-up') {
-      return <Auth />;
-    }
-    return <NotFound />;
-  }
+  // renderPage() {
+  //   const { path } = this.state.route;
+  // if (path === '') {
+  //   return <Home />;
+  // }
+  // if (path === 'sign-in' || path === 'sign-up') {
+  //   return <Auth />;
+  // }
+  //   if (path === '' || path === 'sign-in' || path === 'sign-up') {
+  //     return <Auth />;
+  //   }
+  //   return <NotFound />;
+  // }
 
   render() {
     if (this.state.isAuthorizing) return null;
     const { user, route } = this.state;
     const { handleSignIn, handleSignOut } = this;
     const contextValue = { user, route, handleSignIn, handleSignOut };
+    const renderPage = !user ? <Auth /> : <Home />;
     return (
       <AppContext.Provider value={contextValue}>
         <>
-          { this.renderPage() }
+          {renderPage}
         </>
       </AppContext.Provider>
     );
