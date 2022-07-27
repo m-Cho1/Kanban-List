@@ -5,12 +5,9 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import AppContext from '../lib/app-context';
 
-export default class MainNav extends React.Component {
-  render() {
-    const { handleSignOut } = this.context;
-    return (
+function MainNav() {
+  return (
     <>
       {[false].map(expand => (
         <Navbar key={expand} bg="primary" expand={expand} className="mb-3">
@@ -30,7 +27,7 @@ export default class MainNav extends React.Component {
               <Offcanvas.Body>
                 <Nav className="justify-content-end flex-grow-1 pe-3">
                   <Nav.Link href="#action1">My Kanban List</Nav.Link>
-                  <Nav.Link href="#sign-in" onClick={handleSignOut}>Sign Out</Nav.Link>
+                  <Nav.Link href="#action2">Sign Out</Nav.Link>
                 </Nav>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
@@ -38,8 +35,7 @@ export default class MainNav extends React.Component {
         </Navbar>
       ))}
     </>
-    );
-  }
+  );
 }
 
-MainNav.contextType = AppContext;
+export default MainNav;
