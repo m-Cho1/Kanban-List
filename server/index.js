@@ -6,6 +6,7 @@ const pg = require('pg');
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const ClientError = require('./client-error');
+const authorizationMiddleware = require('./authorization-middleware');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -81,6 +82,7 @@ app.post('/api/auth/sign-in', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.use(authorizationMiddleware);
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
