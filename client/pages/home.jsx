@@ -1,8 +1,8 @@
 import React from 'react';
-import HelloWorld from '../components/hello-world';
+import CreateTask from '../components/create-task';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
-import Navbar from '../components/navbar';
+import MainNav from '../components/navbar';
 
 export default class Home extends React.Component {
   render() {
@@ -11,8 +11,8 @@ export default class Home extends React.Component {
 
     return (
     <div>
-      <Navbar />
-      <HelloWorld />
+      <MainNav />
+      <CreateTask />
     </div>
     );
   }
