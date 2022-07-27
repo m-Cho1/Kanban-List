@@ -68,6 +68,7 @@ export default class AuthForm extends React.Component {
   render() {
     const { action } = this.props;
     const { handleChange, handleSubmit, handlePasswordChange } = this;
+    const passwordMessage = action === 'sign-up' ? this.state.message : '';
     const checkHref = action === 'sign-up' ? '#sign-in' : '#sign-up';
     const actionText = action === 'sign-up' ? 'Sign in instead' : 'Create an Account';
     const submitBtnText = action === 'sign-up' ? 'Create' : 'Log In';
@@ -88,7 +89,7 @@ export default class AuthForm extends React.Component {
         </div>
         <div className="mb-3">
           <label htmlFor="password" className="form-label">
-            Password <p className='text-danger'>{this.state.message}</p>
+            Password <p className='text-danger'>{passwordMessage}</p>
           </label>
           <input
             required
