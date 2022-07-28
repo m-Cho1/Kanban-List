@@ -15,11 +15,15 @@ export default class CreateTask extends React.Component {
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleChange(event) {
     const name = event.target.name;
     const value = event.target.value;
+    this.setState({
+      [name]: value
+    });
   }
 
   handleShow() {
@@ -30,8 +34,19 @@ export default class CreateTask extends React.Component {
     this.setState({ isOpen: false });
   }
 
-  handleSubmit() {
-
+  handleSubmit(event) {
+    if (this.state.title === '' || this.state.status === '') {
+      alert('Title or status is required field');
+      return;
+    }
+    console.log('values:', this.state);
+    event.preventDefault();
+    this.setState({
+      title: '',
+      status: '',
+      notes: '',
+      isOpen: false
+    });
   }
 
   render() {
@@ -55,6 +70,7 @@ export default class CreateTask extends React.Component {
           type='text'
           placeholder='Task title here:'
           name='title'
+          value={this.state.title}
           onChange={handleChange}
           />
           </Form.Group>
@@ -73,6 +89,7 @@ export default class CreateTask extends React.Component {
                       onChange={handleChange}
                     />
                     <Form.Check
+                      required
                       inline
                       label='In Progress'
                       name='status'
@@ -82,6 +99,7 @@ export default class CreateTask extends React.Component {
                       onChange={handleChange}
                     />
                     <Form.Check
+                      required
                       inline
                       label='Urgent'
                       name='status'
@@ -100,6 +118,7 @@ export default class CreateTask extends React.Component {
             rows='4'
             name='notes'
             placeholder='Notes here:'
+            value={this.state.notes}
             onChange={handleChange}
             />
           </Form.Group>
@@ -108,7 +127,7 @@ export default class CreateTask extends React.Component {
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleClose}>
+            <Button variant="primary" onClick={handleSubmit}>
               Save
             </Button>
           </Modal.Footer>
