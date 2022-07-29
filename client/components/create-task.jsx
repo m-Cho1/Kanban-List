@@ -39,8 +39,21 @@ export default class CreateTask extends React.Component {
       alert('Title or status is required field');
       return;
     }
-    console.log('values:', this.state);
+    // console.log('values:', this.state);
     event.preventDefault();
+    const req = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': localStorage.getItem('react-context-jwt')
+      },
+      body: JSON.stringify(this.state)
+    };
+    fetch('/api/tasks', req)
+      .then(res => res.json())
+      .then(result => {
+        console.log('result:', result);
+      });
     this.setState({
       title: '',
       status: '',

@@ -84,6 +84,29 @@ app.post('/api/auth/sign-in', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/tasks', (req, res, next) => {
+  const userId = 1;
+  const { title, status, notes } = req.body;
+  // console.log('Body data:', req.body);
+  const sql = `
+              insert into "tasks" ("userId", "title", "status", "notes")
+              values ($1, $2, $3, $4)
+              returning *
+              `;
+  const values = [userId, title, status, notes];
+  if (values.includes(undefined)) {
+    throw new ClientError(401, 'title and status is required field');
+  }
+
+  db.query(sql, values)
+    .then(result => {
+      const newTask = result.rows[0];
+      res.json(newTask);
+    })
+    .catch(err => next(err));
+
+});
+
 app.use(authorizationMiddleware);
 app.use(errorMiddleware);
 
