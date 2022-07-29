@@ -12,7 +12,14 @@ export default class Home extends React.Component {
     return (
     <div>
       <MainNav />
-      <CreateTask />
+      <div className='container-sm'>
+        <div className='row'>
+          <div className='d-grid gap-2'>
+            <CreateTask />
+          </div>
+        </div>
+      </div>
+
     </div>
     );
   }
