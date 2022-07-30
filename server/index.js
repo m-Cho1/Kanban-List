@@ -107,6 +107,28 @@ app.post('/api/tasks', (req, res, next) => {
 
 });
 
+app.get('/api/tasks/:userId', (req, res, next) => {
+  const userId = Number(req.params.userId);
+  if (userId <= 0) {
+    throw new ClientError(401, 'userId must be a positive integer');
+  }
+  const sql = `
+               select *
+               from "tasks"
+               where "userId" = $1
+              `;
+  const value = [userId];
+  db.query(sql, value)
+    .then(result => {
+      if (!value) {
+        throw new ClientError(401, `no matching task with userId ${userId}`);
+      }
+      const loadData = result.rows;
+      res.json({ loadData });
+    })
+    .catch(error => next(error));
+});
+
 app.use(authorizationMiddleware);
 app.use(errorMiddleware);
 
