@@ -2,6 +2,7 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import ViewTask from './task-list';
 
 export default class CreateTask extends React.Component {
   constructor(props) {
@@ -66,6 +67,7 @@ export default class CreateTask extends React.Component {
     const { handleShow, handleClose, handleChange, handleSubmit } = this;
     return (
     <>
+    <ViewTask />
     <Button variant="primary" onClick={handleShow}>
         Create a Task
       </Button>

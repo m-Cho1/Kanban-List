@@ -8,11 +8,6 @@ export default class ViewTask extends React.Component {
       tasks: [],
       taskLoaded: false
     };
-    this.handleIcon = this.handleIcon.bind(this);
-  }
-
-  handleIcon() {
-    // change icons based on status
   }
 
   componentDidMount() {
@@ -41,11 +36,11 @@ export default class ViewTask extends React.Component {
     return (
       <div>
         <div className='row'>
-          <div className='col' >
+          <div className='col'>
             {tasks.map(task =>
             <>
             <div className="card text-bg-light mb-3" key={task.taskId}>
-            <div className="card-header"><i className='bi bi-hourglass-split'></i>{task.title}</div>
+            <div className="card-header">{task.title}</div>
               <div className="card-body">
                 <p className="card-text text-center">{task.status}</p>
                 <p className='card-text text-center'>{task.notes}</p>
