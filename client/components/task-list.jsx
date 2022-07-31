@@ -40,25 +40,20 @@ export default class ViewTask extends React.Component {
     if (!taskLoaded) return <div><h1>loading...</h1></div>;
     return (
       <div>
-        render tasks here:
-
-        {tasks.map(task =>
-          <div key={task.taskId}>
-            Title: {task.title}
-            Status: {task.status}
-            Notes: {task.notes}
-          </div>
-        )}
         <div className='row'>
-          <div className='col'>
-            <div className="card text-bg-light mb-3" >
-              <div className="card-header"><i className='bi bi-hourglass-split'></i>Title here:</div>
-                <div className="card-body">
-                  <p className="card-text text-center">status here:</p>
-                  <p className='card-text text-center'>notes here:</p>
-                  <i className='bi bi-three-dots-vertical'></i>
-                </div>
+          <div className='col' >
+            {tasks.map(task =>
+            <>
+            <div className="card text-bg-light mb-3" key={task.taskId}>
+            <div className="card-header"><i className='bi bi-hourglass-split'></i>{task.title}</div>
+              <div className="card-body">
+                <p className="card-text text-center">{task.status}</p>
+                <p className='card-text text-center'>{task.notes}</p>
+                <i className='bi bi-three-dots-vertical'></i>
+              </div>
             </div>
+            </>
+            )}
           </div>
         </div>
       </div>
