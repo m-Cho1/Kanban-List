@@ -84,10 +84,11 @@ app.post('/api/auth/sign-in', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.use(authorizationMiddleware);
+
 app.post('/api/tasks', (req, res, next) => {
-  const userId = 1;
+  const userId = req.user.userId;
   const { title, status, notes } = req.body;
-  // console.log('Body data:', req.body);
   const sql = `
               insert into "tasks" ("userId", "title", "status", "notes")
               values ($1, $2, $3, $4)
@@ -107,8 +108,8 @@ app.post('/api/tasks', (req, res, next) => {
 
 });
 
-app.get('/api/tasks/:userId', (req, res, next) => {
-  const userId = Number(req.params.userId);
+app.get('/api/tasks/', (req, res, next) => {
+  const userId = Number(req.user.userId);
   if (userId <= 0) {
     throw new ClientError(401, 'userId must be a positive integer');
   }
@@ -116,6 +117,7 @@ app.get('/api/tasks/:userId', (req, res, next) => {
                select *
                from "tasks"
                where "userId" = $1
+               order by "createdAt" desc
               `;
   const value = [userId];
   db.query(sql, value)
@@ -129,7 +131,6 @@ app.get('/api/tasks/:userId', (req, res, next) => {
     .catch(error => next(error));
 });
 
-app.use(authorizationMiddleware);
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
