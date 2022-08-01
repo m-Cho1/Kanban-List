@@ -84,10 +84,11 @@ app.post('/api/auth/sign-in', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.use(authorizationMiddleware);
+
 app.post('/api/tasks', (req, res, next) => {
-  const userId = 1;
+  const userId = req.user.userId;
   const { title, status, notes } = req.body;
-  // console.log('Body data:', req.body);
   const sql = `
               insert into "tasks" ("userId", "title", "status", "notes")
               values ($1, $2, $3, $4)
@@ -107,7 +108,29 @@ app.post('/api/tasks', (req, res, next) => {
 
 });
 
-app.use(authorizationMiddleware);
+app.get('/api/tasks/', (req, res, next) => {
+  const userId = Number(req.user.userId);
+  if (userId <= 0) {
+    throw new ClientError(401, 'userId must be a positive integer');
+  }
+  const sql = `
+               select *
+               from "tasks"
+               where "userId" = $1
+               order by "createdAt" desc
+              `;
+  const value = [userId];
+  db.query(sql, value)
+    .then(result => {
+      if (!value) {
+        throw new ClientError(401, `no matching task with userId ${userId}`);
+      }
+      const loadData = result.rows;
+      res.json({ loadData });
+    })
+    .catch(error => next(error));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

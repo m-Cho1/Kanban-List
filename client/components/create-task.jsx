@@ -1,4 +1,5 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
@@ -10,12 +11,15 @@ export default class CreateTask extends React.Component {
       title: '',
       status: '',
       notes: '',
+      tasks: [],
+      taskLoaded: false,
       isOpen: false
     };
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
 
   handleChange(event) {
@@ -39,7 +43,7 @@ export default class CreateTask extends React.Component {
       alert('Title or status is required field');
       return;
     }
-    // console.log('values:', this.state);
+
     event.preventDefault();
     const req = {
       method: 'POST',
@@ -52,20 +56,58 @@ export default class CreateTask extends React.Component {
     fetch('/api/tasks', req)
       .then(res => res.json())
       .then(result => {
-        console.log('result:', result);
+        this.setState({
+          tasks: [result, ...this.state.tasks],
+          isOpen: false
+        });
+        // console.log('result:', result);
       });
     this.setState({
       title: '',
       status: '',
-      notes: '',
-      isOpen: false
+      notes: ''
     });
   }
 
+  // for rendering data to page:
+  componentDidMount() {
+    const req = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': localStorage.getItem('react-context-jwt')
+      }
+    };
+    fetch('/api/tasks/', req)
+      .then(res => res.json())
+      .then(result => {
+        this.setState({
+          tasks: result.loadData,
+          taskLoaded: true
+        });
+      })
+      .catch(err => console.error(err));
+  }
+
   render() {
+    const { taskLoaded } = this.state;
     const { handleShow, handleClose, handleChange, handleSubmit } = this;
+    if (!taskLoaded) return <div><h1>loading...</h1></div>;
     return (
     <>
+    <>
+      {this.state.tasks.map(task =>
+        <div className="card text-bg-light mb-3" key={task.taskId}>
+          <div className="card-header">{task.title}</div>
+            <div className="card-body">
+            <p className="card-text text-center">{task.status}</p>
+            <p className='card-text text-center'>{task.notes}</p>
+            <i className='bi bi-three-dots-vertical'></i>
+            </div>
+        </div>
+      )}
+      </>
+
     <Button variant="primary" onClick={handleShow}>
         Create a Task
       </Button>
@@ -96,7 +138,7 @@ export default class CreateTask extends React.Component {
                       inline
                       label='Todo'
                       name='status'
-                      value='todo'
+                      value='Todo'
                       type={type}
                       id={`inline-${type}-1`}
                       onChange={handleChange}
@@ -106,7 +148,7 @@ export default class CreateTask extends React.Component {
                       inline
                       label='In Progress'
                       name='status'
-                      value='in-progress'
+                      value='In-progress'
                       type={type}
                       id={`inline-${type}-2`}
                       onChange={handleChange}
@@ -116,7 +158,7 @@ export default class CreateTask extends React.Component {
                       inline
                       label='Urgent'
                       name='status'
-                      value='urgent'
+                      value='Urgent'
                       type={type}
                       id={`inline-${type}-3`}
                       onChange={handleChange}

@@ -29,7 +29,6 @@ export default class MainNav extends React.Component {
               </Offcanvas.Header>
               <Offcanvas.Body>
                 <Nav className="justify-content-end flex-grow-1 pe-3">
-                  <Nav.Link href="#action1">My Kanban List</Nav.Link>
                   <Nav.Link href="#sign-in" onClick={handleSignOut}>Sign Out</Nav.Link>
                 </Nav>
               </Offcanvas.Body>
