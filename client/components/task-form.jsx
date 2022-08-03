@@ -13,13 +13,16 @@ export default class CreateTask extends React.Component {
       notes: '',
       tasks: [],
       taskLoaded: false,
-      isOpen: false
+      isOpen: false,
+      editTask: false
     };
+
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.editTask = this.editTask.bind(this);
   }
 
   handleChange(event) {
@@ -49,7 +52,7 @@ export default class CreateTask extends React.Component {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Access-Token': localStorage.getItem('react-context-jwt')
+        'X-Access-Token': localStorage.getItem('task-jwt')
       },
       body: JSON.stringify(this.state)
     };
@@ -75,7 +78,7 @@ export default class CreateTask extends React.Component {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Access-Token': localStorage.getItem('react-context-jwt')
+        'X-Access-Token': localStorage.getItem('task-jwt')
       }
     };
     fetch('/api/tasks/', req)
@@ -89,20 +92,24 @@ export default class CreateTask extends React.Component {
       .catch(err => console.error(err));
   }
 
+  editTask() {
+    this.setState({ isOpen: true });
+  }
+
   render() {
     const { taskLoaded } = this.state;
-    const { handleShow, handleClose, handleChange, handleSubmit } = this;
+    const { handleShow, handleClose, handleChange, handleSubmit, editTask } = this;
     if (!taskLoaded) return <div><h1>loading...</h1></div>;
     return (
     <>
     <>
       {this.state.tasks.map(task =>
-        <div className="card text-bg-light mb-3" key={task.taskId}>
+        <div className="card text-bg-light mb-3" key={task.taskId} id={task.taskId}>
           <div className="card-header">{task.title}</div>
             <div className="card-body">
             <p className="card-text text-center">{task.status}</p>
             <p className='card-text text-center'>{task.notes}</p>
-            <i className='bi bi-three-dots-vertical'></i>
+            <i className='bi bi-three-dots-vertical' onClick={editTask}></i>
             </div>
         </div>
       )}

@@ -131,6 +131,11 @@ app.get('/api/tasks/', (req, res, next) => {
     .catch(error => next(error));
 });
 
+app.put('/api/tasks/', (req, res, next) => {
+  const userId = Number(req.user.userId);
+  // retrieve data that matches userId here:
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
