@@ -131,9 +131,32 @@ app.get('/api/tasks/', (req, res, next) => {
     .catch(error => next(error));
 });
 
-app.put('/api/tasks/', (req, res, next) => {
-  const userId = Number(req.user.userId);
-  // retrieve data that matches userId here:
+app.put('/api/tasks/:taskId', (req, res, next) => {
+  const taskId = Number(req.params.taskId);
+  const { title, status, notes } = req.body;
+  const sql = `
+                update "tasks"
+                set "createdAt" = now(),
+                    "title" = $2,
+                    "status" =$3,
+                    "notes" = $4
+                where "taskId" = $1
+                returning *
+              `;
+  const values = [taskId, title, status, notes];
+  if (values === undefined) {
+    throw new ClientError(401, 'title and status is required field');
+  }
+
+  db.query(sql, values)
+    .then(result => {
+      const [task] = result.rows;
+      if (!task) {
+        throw new ClientError(401, `cannot find task with taskId ${taskId}`);
+      }
+      res.json(task);
+    })
+    .catch(err => next(err));
 });
 
 app.use(errorMiddleware);

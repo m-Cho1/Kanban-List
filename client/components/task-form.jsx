@@ -14,7 +14,7 @@ export default class CreateTask extends React.Component {
       tasks: [],
       taskLoaded: false,
       isOpen: false,
-      editTask: false
+      editTask: null
     };
 
     this.handleShow = this.handleShow.bind(this);
@@ -23,6 +23,13 @@ export default class CreateTask extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.editTask = this.editTask.bind(this);
+  }
+
+  editTask() {
+    this.setState({
+      isOpen: true,
+      editTask: this.state
+    });
   }
 
   handleChange(event) {
@@ -90,10 +97,6 @@ export default class CreateTask extends React.Component {
         });
       })
       .catch(err => console.error(err));
-  }
-
-  editTask() {
-    this.setState({ isOpen: true });
   }
 
   render() {
