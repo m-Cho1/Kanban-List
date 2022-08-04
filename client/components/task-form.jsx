@@ -32,15 +32,15 @@ export default class CreateTask extends React.Component {
 
     const editingTask = this.state.tasks.filter(task => { return task.taskId === parseInt(editTaskId); });
     console.log('editingTask:', editingTask);
+
     this.setState({
       isOpen: true,
       isEditing: true,
       editTask: editingTask,
       title: editingTask[0].title,
-      status: editingTask[0].status,
+      status: editingTask[0].status.value, // checked={true}
       notes: editingTask[0].notes
     });
-    console.log('this.state:', this.state);
 
     const req = {
       method: 'PUT',
@@ -55,7 +55,9 @@ export default class CreateTask extends React.Component {
       .then(result => {
         const tasksCopy = [...this.state.tasks];
         tasksCopy[matchTaskIndex] = result;
-        this.setState({ tasks: tasksCopy });
+        this.setState({
+          tasks: tasksCopy
+        });
       })
       .catch(err => console.error(err));
 
@@ -75,7 +77,8 @@ export default class CreateTask extends React.Component {
 
   handleClose() {
     this.setState({
-      isOpen: false
+      isOpen: false,
+      isEditing: false
     });
   }
 
@@ -131,9 +134,13 @@ export default class CreateTask extends React.Component {
   }
 
   render() {
-    const { taskLoaded } = this.state;
+    let formTitle = 'New Task';
+    const { taskLoaded, isEditing } = this.state;
     const { handleShow, handleClose, handleChange, handleSubmit, handleEditTask } = this;
     if (!taskLoaded) return <div><h1>loading...</h1></div>;
+    if (isEditing) {
+      formTitle = 'Edit Task';
+    }
     return (
     <>
     <>
@@ -159,7 +166,7 @@ export default class CreateTask extends React.Component {
       <Form>
         <Modal className='mt-5' show={this.state.isOpen} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>New Task</Modal.Title>
+            <Modal.Title>{formTitle}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
           <Form.Group className='mb-3' controlId='formTitle'>
