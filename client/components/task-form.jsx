@@ -16,7 +16,9 @@ export default class CreateTask extends React.Component {
       isOpen: false,
       isEditing: false,
       editTask: null,
-      editingTaskId: null
+      editingTaskId: null,
+      deleteModalOpen: false,
+      deleteTaskId: null
     };
 
     this.handleShow = this.handleShow.bind(this);
@@ -26,6 +28,8 @@ export default class CreateTask extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleEditTask = this.handleEditTask.bind(this);
+    this.handleDeleteModal = this.handleDeleteModal.bind(this);
+    this.handleDeleteTask = this.handleDeleteTask.bind(this);
   }
 
   handleEditTask(taskId) {
@@ -63,7 +67,8 @@ export default class CreateTask extends React.Component {
   handleClose() {
     this.setState({
       isOpen: false,
-      isEditing: false
+      isEditing: false,
+      deleteModalOpen: false
     });
   }
 
@@ -133,6 +138,20 @@ export default class CreateTask extends React.Component {
 
   }
 
+  handleDeleteModal(taskId) {
+    const deletingTaskId = parseInt(taskId.target.getAttribute('data-task'));
+    console.log('deletingTaskId:', deletingTaskId);
+    this.setState({
+      deleteModalOpen: true,
+      deleteTaskId: deletingTaskId
+    });
+
+  }
+
+  handleDeleteTask(taskId) {
+    console.log('deleteTaskId show after clicking delete:', this.state.deleteTaskId);
+  }
+
   // for rendering data to page:
   componentDidMount() {
     const req = {
@@ -156,7 +175,7 @@ export default class CreateTask extends React.Component {
   render() {
     let formTitle = 'New Task';
     const { taskLoaded, isEditing } = this.state;
-    const { handleShow, handleClose, handleChange, handleStatusChange, handleSubmit, handleEditTask } = this;
+    const { handleShow, handleClose, handleChange, handleStatusChange, handleSubmit, handleEditTask, handleDeleteModal, handleDeleteTask } = this;
     if (!taskLoaded) return <div><h1>loading...</h1></div>;
     if (isEditing) {
       formTitle = 'Edit Task';
@@ -170,13 +189,35 @@ export default class CreateTask extends React.Component {
             <div className="card-body">
             <p className="card-text text-center">{task.status}</p>
             <p className='card-text text-center'>{task.notes}</p>
-            <i
+            <div className='d-flex justify-content-between'>
+              <i
             className='bi bi-three-dots-vertical'
             data-task={task.taskId}
             onClick={handleEditTask}></i>
+            <i
+            className='bi bi-trash'
+            data-task={task.taskId}
+            onClick={handleDeleteModal}
+            ></i>
+            </div>
             </div>
         </div>
       )}
+      </>
+      <>
+        <Modal show={this.state.deleteModalOpen} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete this task?</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={handleDeleteTask} data-task={this.taskId}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
       </>
 
     <Button variant="primary" onClick={handleShow}>
