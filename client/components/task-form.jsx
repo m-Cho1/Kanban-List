@@ -14,6 +14,7 @@ export default class CreateTask extends React.Component {
       tasks: [],
       taskLoaded: false,
       isOpen: false,
+      isEditing: false,
       editTask: null
     };
 
@@ -22,14 +23,42 @@ export default class CreateTask extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.editTask = this.editTask.bind(this);
+    this.handleEditTask = this.handleEditTask.bind(this);
   }
 
-  editTask() {
+  handleEditTask(taskId) {
+    const editTaskId = taskId.target.getAttribute('data-task');
+    const matchTaskIndex = this.state.tasks.findIndex(task => task.taskId === editTaskId.taskId);
+
+    const editingTask = this.state.tasks.filter(task => { return task.taskId === parseInt(editTaskId); });
+    console.log('editingTask:', editingTask);
     this.setState({
       isOpen: true,
-      editTask: this.state
+      isEditing: true,
+      editTask: editingTask,
+      title: editingTask[0].title,
+      status: editingTask[0].status,
+      notes: editingTask[0].notes
     });
+    console.log('this.state:', this.state);
+
+    const req = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': localStorage.getItem('task-jwt')
+      },
+      body: JSON.stringify(this.state.editTask)
+    };
+    fetch(`/api/tasks/${editTaskId}`, req)
+      .then(res => res.json())
+      .then(result => {
+        const tasksCopy = [...this.state.tasks];
+        tasksCopy[matchTaskIndex] = result;
+        this.setState({ tasks: tasksCopy });
+      })
+      .catch(err => console.error(err));
+
   }
 
   handleChange(event) {
@@ -45,7 +74,9 @@ export default class CreateTask extends React.Component {
   }
 
   handleClose() {
-    this.setState({ isOpen: false });
+    this.setState({
+      isOpen: false
+    });
   }
 
   handleSubmit(event) {
@@ -101,7 +132,7 @@ export default class CreateTask extends React.Component {
 
   render() {
     const { taskLoaded } = this.state;
-    const { handleShow, handleClose, handleChange, handleSubmit, editTask } = this;
+    const { handleShow, handleClose, handleChange, handleSubmit, handleEditTask } = this;
     if (!taskLoaded) return <div><h1>loading...</h1></div>;
     return (
     <>
@@ -112,7 +143,10 @@ export default class CreateTask extends React.Component {
             <div className="card-body">
             <p className="card-text text-center">{task.status}</p>
             <p className='card-text text-center'>{task.notes}</p>
-            <i className='bi bi-three-dots-vertical' onClick={editTask}></i>
+            <i
+            className='bi bi-three-dots-vertical'
+            data-task={task.taskId}
+            onClick={handleEditTask}></i>
             </div>
         </div>
       )}
