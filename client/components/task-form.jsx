@@ -13,13 +13,35 @@ export default class CreateTask extends React.Component {
       notes: '',
       tasks: [],
       taskLoaded: false,
-      isOpen: false
+      isOpen: false,
+      isEditing: false,
+      editTask: null,
+      editingTaskId: null
     };
+
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleStatusChange = this.handleStatusChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.handleEditTask = this.handleEditTask.bind(this);
+  }
+
+  handleEditTask(taskId) {
+    const editTaskId = parseInt(taskId.target.getAttribute('data-task'));
+    const editingTask = this.state.tasks.filter(task => { return task.taskId === parseInt(editTaskId); });
+
+    this.setState({
+      isOpen: true,
+      isEditing: true,
+      editTask: editingTask,
+      editingTaskId: editTaskId,
+      title: editingTask[0].title,
+      status: editingTask[0].status,
+      notes: editingTask[0].notes
+    });
+
   }
 
   handleChange(event) {
@@ -30,12 +52,19 @@ export default class CreateTask extends React.Component {
     });
   }
 
+  handleStatusChange(status) {
+    this.setState({ status });
+  }
+
   handleShow() {
     this.setState({ isOpen: true });
   }
 
   handleClose() {
-    this.setState({ isOpen: false });
+    this.setState({
+      isOpen: false,
+      isEditing: false
+    });
   }
 
   handleSubmit(event) {
@@ -44,29 +73,64 @@ export default class CreateTask extends React.Component {
       return;
     }
 
-    event.preventDefault();
-    const req = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Access-Token': localStorage.getItem('react-context-jwt')
-      },
-      body: JSON.stringify(this.state)
-    };
-    fetch('/api/tasks', req)
-      .then(res => res.json())
-      .then(result => {
-        this.setState({
-          tasks: [result, ...this.state.tasks],
-          isOpen: false
-        });
+    if (!this.state.isEditing) {
+      event.preventDefault();
+      const req = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Access-Token': localStorage.getItem('task-jwt')
+        },
+        body: JSON.stringify(this.state)
+      };
+      fetch('/api/tasks', req)
+        .then(res => res.json())
+        .then(result => {
+          this.setState({
+            tasks: [result, ...this.state.tasks],
+            isOpen: false
+          });
         // console.log('result:', result);
+        });
+      this.setState({
+        title: '',
+        status: '',
+        notes: ''
       });
-    this.setState({
-      title: '',
-      status: '',
-      notes: ''
-    });
+    } else {
+      const editTaskId = parseInt(event.target.getAttribute('data-task'));
+      const matchTaskIndex = this.state.tasks.findIndex(task => task.taskId === editTaskId);
+
+      const req = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Access-Token': localStorage.getItem('task-jwt')
+        },
+        body: JSON.stringify(this.state)
+      };
+      fetch(`/api/tasks/${editTaskId}`, req)
+        .then(res => res.json())
+        .then(result => {
+          const tasksCopy = [...this.state.tasks];
+          tasksCopy[matchTaskIndex] = result;
+          tasksCopy.splice(matchTaskIndex, 1);
+          tasksCopy.unshift(result);
+
+          this.setState({
+            tasks: tasksCopy,
+            title: '',
+            status: '',
+            notes: '',
+            isOpen: false,
+            isEditing: false,
+            editTask: null,
+            editingTaskId: null
+          });
+        })
+        .catch(err => console.error(err));
+    }
+
   }
 
   // for rendering data to page:
@@ -75,7 +139,7 @@ export default class CreateTask extends React.Component {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'X-Access-Token': localStorage.getItem('react-context-jwt')
+        'X-Access-Token': localStorage.getItem('task-jwt')
       }
     };
     fetch('/api/tasks/', req)
@@ -90,19 +154,26 @@ export default class CreateTask extends React.Component {
   }
 
   render() {
-    const { taskLoaded } = this.state;
-    const { handleShow, handleClose, handleChange, handleSubmit } = this;
+    let formTitle = 'New Task';
+    const { taskLoaded, isEditing } = this.state;
+    const { handleShow, handleClose, handleChange, handleStatusChange, handleSubmit, handleEditTask } = this;
     if (!taskLoaded) return <div><h1>loading...</h1></div>;
+    if (isEditing) {
+      formTitle = 'Edit Task';
+    }
     return (
     <>
     <>
       {this.state.tasks.map(task =>
-        <div className="card text-bg-light mb-3" key={task.taskId}>
+        <div className="card text-bg-light mb-3" key={task.taskId} id={task.taskId}>
           <div className="card-header">{task.title}</div>
             <div className="card-body">
             <p className="card-text text-center">{task.status}</p>
             <p className='card-text text-center'>{task.notes}</p>
-            <i className='bi bi-three-dots-vertical'></i>
+            <i
+            className='bi bi-three-dots-vertical'
+            data-task={task.taskId}
+            onClick={handleEditTask}></i>
             </div>
         </div>
       )}
@@ -115,7 +186,7 @@ export default class CreateTask extends React.Component {
       <Form>
         <Modal className='mt-5' show={this.state.isOpen} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>New Task</Modal.Title>
+            <Modal.Title>{formTitle}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
           <Form.Group className='mb-3' controlId='formTitle'>
@@ -138,30 +209,30 @@ export default class CreateTask extends React.Component {
                       inline
                       label='Todo'
                       name='status'
-                      value='Todo'
+                      checked={this.state.status === 'Todo'}
                       type={type}
                       id={`inline-${type}-1`}
-                      onChange={handleChange}
+                      onChange={() => handleStatusChange('Todo')}
                     />
                     <Form.Check
                       required
                       inline
                       label='In Progress'
                       name='status'
-                      value='In-progress'
+                      checked={this.state.status === 'In-progress'}
                       type={type}
                       id={`inline-${type}-2`}
-                      onChange={handleChange}
+                      onChange={() => handleStatusChange('In-progress')}
                     />
                     <Form.Check
                       required
                       inline
                       label='Urgent'
                       name='status'
-                      value='Urgent'
+                      checked={this.state.status === 'Urgent'}
                       type={type}
                       id={`inline-${type}-3`}
-                      onChange={handleChange}
+                      onChange={() => handleStatusChange('Urgent')}
                     />
                   </div>
             ))}
@@ -182,7 +253,7 @@ export default class CreateTask extends React.Component {
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="primary" onClick={handleSubmit} data-task={this.state.editingTaskId}>
               Save
             </Button>
           </Modal.Footer>
