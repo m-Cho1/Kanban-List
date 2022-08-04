@@ -15,7 +15,8 @@ export default class CreateTask extends React.Component {
       taskLoaded: false,
       isOpen: false,
       isEditing: false,
-      editTask: null
+      editTask: null,
+      editingTaskId: null
     };
 
     this.handleShow = this.handleShow.bind(this);
@@ -27,39 +28,18 @@ export default class CreateTask extends React.Component {
   }
 
   handleEditTask(taskId) {
-    const editTaskId = taskId.target.getAttribute('data-task');
-    const matchTaskIndex = this.state.tasks.findIndex(task => task.taskId === editTaskId.taskId);
-
+    const editTaskId = parseInt(taskId.target.getAttribute('data-task'));
     const editingTask = this.state.tasks.filter(task => { return task.taskId === parseInt(editTaskId); });
-    console.log('editingTask:', editingTask);
 
     this.setState({
       isOpen: true,
       isEditing: true,
       editTask: editingTask,
+      editingTaskId: editTaskId,
       title: editingTask[0].title,
-      status: editingTask[0].status.value, // checked={true}
+      status: editingTask[0].status.value,
       notes: editingTask[0].notes
     });
-
-    const req = {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Access-Token': localStorage.getItem('task-jwt')
-      },
-      body: JSON.stringify(this.state.editTask)
-    };
-    fetch(`/api/tasks/${editTaskId}`, req)
-      .then(res => res.json())
-      .then(result => {
-        const tasksCopy = [...this.state.tasks];
-        tasksCopy[matchTaskIndex] = result;
-        this.setState({
-          tasks: tasksCopy
-        });
-      })
-      .catch(err => console.error(err));
 
   }
 
@@ -88,29 +68,64 @@ export default class CreateTask extends React.Component {
       return;
     }
 
-    event.preventDefault();
-    const req = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Access-Token': localStorage.getItem('task-jwt')
-      },
-      body: JSON.stringify(this.state)
-    };
-    fetch('/api/tasks', req)
-      .then(res => res.json())
-      .then(result => {
-        this.setState({
-          tasks: [result, ...this.state.tasks],
-          isOpen: false
-        });
+    if (!this.state.isEditing) {
+      event.preventDefault();
+      const req = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Access-Token': localStorage.getItem('task-jwt')
+        },
+        body: JSON.stringify(this.state)
+      };
+      fetch('/api/tasks', req)
+        .then(res => res.json())
+        .then(result => {
+          this.setState({
+            tasks: [result, ...this.state.tasks],
+            isOpen: false
+          });
         // console.log('result:', result);
+        });
+      this.setState({
+        title: '',
+        status: '',
+        notes: ''
       });
-    this.setState({
-      title: '',
-      status: '',
-      notes: ''
-    });
+    } else {
+      const editTaskId = parseInt(event.target.getAttribute('data-task'));
+      const matchTaskIndex = this.state.tasks.findIndex(task => task.taskId === editTaskId);
+
+      const req = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Access-Token': localStorage.getItem('task-jwt')
+        },
+        body: JSON.stringify(this.state)
+      };
+      fetch(`/api/tasks/${editTaskId}`, req)
+        .then(res => res.json())
+        .then(result => {
+          const tasksCopy = [...this.state.tasks];
+          tasksCopy[matchTaskIndex] = result;
+          tasksCopy.splice(matchTaskIndex, 1);
+          tasksCopy.unshift(result);
+
+          this.setState({
+            tasks: tasksCopy,
+            title: '',
+            status: '',
+            notes: '',
+            isOpen: false,
+            isEditing: false,
+            editTask: null,
+            editingTaskId: null
+          });
+        })
+        .catch(err => console.error(err));
+    }
+
   }
 
   // for rendering data to page:
@@ -233,7 +248,7 @@ export default class CreateTask extends React.Component {
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button variant="primary" onClick={handleSubmit} data-task={this.state.editingTaskId}>
               Save
             </Button>
           </Modal.Footer>
