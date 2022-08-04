@@ -22,6 +22,7 @@ export default class CreateTask extends React.Component {
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleStatusChange = this.handleStatusChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleEditTask = this.handleEditTask.bind(this);
@@ -37,7 +38,7 @@ export default class CreateTask extends React.Component {
       editTask: editingTask,
       editingTaskId: editTaskId,
       title: editingTask[0].title,
-      status: editingTask[0].status.value,
+      status: editingTask[0].status,
       notes: editingTask[0].notes
     });
 
@@ -49,6 +50,10 @@ export default class CreateTask extends React.Component {
     this.setState({
       [name]: value
     });
+  }
+
+  handleStatusChange(status) {
+    this.setState({ status });
   }
 
   handleShow() {
@@ -151,7 +156,7 @@ export default class CreateTask extends React.Component {
   render() {
     let formTitle = 'New Task';
     const { taskLoaded, isEditing } = this.state;
-    const { handleShow, handleClose, handleChange, handleSubmit, handleEditTask } = this;
+    const { handleShow, handleClose, handleChange, handleStatusChange, handleSubmit, handleEditTask } = this;
     if (!taskLoaded) return <div><h1>loading...</h1></div>;
     if (isEditing) {
       formTitle = 'Edit Task';
@@ -204,30 +209,30 @@ export default class CreateTask extends React.Component {
                       inline
                       label='Todo'
                       name='status'
-                      value='Todo'
+                      checked={this.state.status === 'Todo'}
                       type={type}
                       id={`inline-${type}-1`}
-                      onChange={handleChange}
+                      onChange={() => handleStatusChange('Todo')}
                     />
                     <Form.Check
                       required
                       inline
                       label='In Progress'
                       name='status'
-                      value='In-progress'
+                      checked={this.state.status === 'In-progress'}
                       type={type}
                       id={`inline-${type}-2`}
-                      onChange={handleChange}
+                      onChange={() => handleStatusChange('In-progress')}
                     />
                     <Form.Check
                       required
                       inline
                       label='Urgent'
                       name='status'
-                      value='Urgent'
+                      checked={this.state.status === 'Urgent'}
                       type={type}
                       id={`inline-${type}-3`}
-                      onChange={handleChange}
+                      onChange={() => handleStatusChange('Urgent')}
                     />
                   </div>
             ))}
