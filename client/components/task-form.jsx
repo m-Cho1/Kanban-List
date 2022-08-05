@@ -149,7 +149,29 @@ export default class CreateTask extends React.Component {
   }
 
   handleDeleteTask(taskId) {
-    console.log('deleteTaskId show after clicking delete:', this.state.deleteTaskId);
+    const deletingTaskId = this.state.deleteTaskId;
+    console.log('deleteTaskId show after clicking delete:', deletingTaskId);
+    const newTaskArr = this.state.tasks.filter(task => {
+      return task.taskId !== deletingTaskId;
+    });
+    console.log('newTaskArr:', newTaskArr);
+
+    const req = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': localStorage.getItem('task-jwt')
+      }
+    };
+    fetch(`/api/tasks/${deletingTaskId}`, req)
+      .then(result => {
+        this.setState({
+          tasks: newTaskArr,
+          deleteModalOpen: false,
+          deleteTaskId: null
+        });
+      });
+
   }
 
   // for rendering data to page:
