@@ -159,6 +159,24 @@ app.put('/api/tasks/:taskId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.delete('/api/tasks/:taskId', (req, res, next) => {
+  const taskId = Number(req.params.taskId);
+  const sql = `
+                delete from "tasks"
+                where "taskId" = $1
+                returning *
+              `;
+  const value = [taskId];
+  db.query(sql, value)
+    .then(result => {
+      if (!result.rows) {
+        throw new ClientError(401, 'invalid taskId');
+      }
+      res.sendStatus(204);
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
