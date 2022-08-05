@@ -95,7 +95,6 @@ export default class CreateTask extends React.Component {
             tasks: [result, ...this.state.tasks],
             isOpen: false
           });
-        // console.log('result:', result);
         });
       this.setState({
         title: '',
@@ -140,7 +139,6 @@ export default class CreateTask extends React.Component {
 
   handleDeleteModal(taskId) {
     const deletingTaskId = parseInt(taskId.target.getAttribute('data-task'));
-    console.log('deletingTaskId:', deletingTaskId);
     this.setState({
       deleteModalOpen: true,
       deleteTaskId: deletingTaskId
@@ -150,11 +148,9 @@ export default class CreateTask extends React.Component {
 
   handleDeleteTask(taskId) {
     const deletingTaskId = this.state.deleteTaskId;
-    console.log('deleteTaskId show after clicking delete:', deletingTaskId);
     const newTaskArr = this.state.tasks.filter(task => {
       return task.taskId !== deletingTaskId;
     });
-    console.log('newTaskArr:', newTaskArr);
 
     const req = {
       method: 'DELETE',
