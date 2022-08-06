@@ -1,11 +1,24 @@
+* {
+  font-family: Roboto, sans-serif;
+}
+
 .bi-three-dots-vertical {
   cursor: pointer;
 }
 
 .bi-trash {
   cursor: pointer;
+  color: red;
 }
 
 .card {
   width: 100%;
+}
+
+.task-title {
+  font-weight: 500;
+}
+
+.task-notes {
+  white-space: pre-line;
 }
