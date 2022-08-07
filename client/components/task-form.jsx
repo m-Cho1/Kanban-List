@@ -198,32 +198,35 @@ export default class CreateTask extends React.Component {
     if (isEditing) {
       formTitle = 'Edit Task';
     }
+
     return (
     <>
     <>
       {this.state.tasks.map(task =>
-        <div className="card text-bg-light mb-3" key={task.taskId} id={task.taskId}>
-          <div className="card-header">{task.title}</div>
-            <div className="card-body">
-            <p className="card-text text-center">{task.status}</p>
-            <p className='card-text text-center'>{task.notes}</p>
+        <div className="card text-bg-light mb-3 d-flex" key={task.taskId} id={task.taskId}>
+          <div className="card-header task-title d-flex justify-content-between">
+            <span>{task.title}</span>
+            <span>{task.status}</span>
+          </div>
+          <div className="card-body">
+            <p className='card-text text-center m-2 mb-3 task-notes'>{task.notes}</p>
             <div className='d-flex justify-content-between'>
               <i
-            className='bi bi-three-dots-vertical'
-            data-task={task.taskId}
-            onClick={handleEditTask}></i>
-            <i
-            className='bi bi-trash'
-            data-task={task.taskId}
-            onClick={handleDeleteModal}
-            ></i>
+                className='bi bi-three-dots-vertical'
+                data-task={task.taskId}
+                onClick={handleEditTask}></i>
+              <i
+                className='bi bi-trash'
+                data-task={task.taskId}
+                onClick={handleDeleteModal}
+              ></i>
             </div>
-            </div>
+          </div>
         </div>
       )}
       </>
       <>
-        <Modal show={this.state.deleteModalOpen} onHide={handleClose}>
+        <Modal className='mt-5' show={this.state.deleteModalOpen} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Delete this task?</Modal.Title>
         </Modal.Header>
