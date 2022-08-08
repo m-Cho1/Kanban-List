@@ -66,6 +66,9 @@ export default class CreateTask extends React.Component {
 
   handleClose() {
     this.setState({
+      title: '',
+      status: '',
+      notes: '',
       isOpen: false,
       isEditing: false,
       deleteModalOpen: false
