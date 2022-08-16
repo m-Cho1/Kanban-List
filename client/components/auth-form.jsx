@@ -12,6 +12,14 @@ export default class AuthForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleDemoLogIn = this.handleDemoLogIn.bind(this);
+  }
+
+  handleDemoLogIn(event) {
+    this.setState({
+      username: 'demouser',
+      password: 'demouser'
+    });
   }
 
   handleChange(event) {
@@ -67,12 +75,14 @@ export default class AuthForm extends React.Component {
 
   render() {
     const { action } = this.props;
-    const { handleChange, handleSubmit, handlePasswordChange } = this;
+    const { handleChange, handleSubmit, handlePasswordChange, handleDemoLogIn } = this;
     const passwordMessage = action === 'sign-up' ? this.state.message : '';
     const checkHref = action === 'sign-up' ? '#sign-in' : '#sign-up';
     const actionText = action === 'sign-up' ? 'Sign in instead' : 'Create an Account';
     const submitBtnText = action === 'sign-up' ? 'Create' : 'Log In';
+
     return (
+      <>
       <form className="w-100" onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="username" className="form-label">
@@ -84,6 +94,7 @@ export default class AuthForm extends React.Component {
             id="username"
             type="text"
             name="username"
+            value={this.state.username}
             onChange={handleChange}
             className="form-control bg-light" />
         </div>
@@ -96,6 +107,7 @@ export default class AuthForm extends React.Component {
             id="password"
             type="password"
             name="password"
+            value={this.state.password}
             onChange={handlePasswordChange}
             className="form-control bg-light" />
         </div>
@@ -105,11 +117,13 @@ export default class AuthForm extends React.Component {
               { actionText }
             </a>
           </small>
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary mb-2">
             { submitBtnText }
           </button>
         </div>
       </form>
+      <button type='#' className='btn btn-outline-secondary btn-sm' onClick={handleDemoLogIn}>Demo Login</button>
+      </>
     );
   }
 }
