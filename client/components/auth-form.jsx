@@ -80,6 +80,7 @@ export default class AuthForm extends React.Component {
     const checkHref = action === 'sign-up' ? '#sign-in' : '#sign-up';
     const actionText = action === 'sign-up' ? 'Sign in instead' : 'Create an Account';
     const submitBtnText = action === 'sign-up' ? 'Create' : 'Log In';
+    const hideDemoBtn = action === 'sign-up' ? 'invisible' : '';
 
     return (
       <>
@@ -122,7 +123,7 @@ export default class AuthForm extends React.Component {
           </button>
         </div>
       </form>
-      <button type='#' className='btn btn-outline-secondary btn-sm' onClick={handleDemoLogIn}>Demo Login</button>
+      <button type='#' className={`btn btn-outline-secondary btn-sm ${hideDemoBtn}`} onClick={handleDemoLogIn}>Demo Login</button>
       </>
     );
   }
