@@ -197,7 +197,7 @@ export default class CreateTask extends React.Component {
     let formTitle = 'New Task';
     const { taskLoaded, isEditing } = this.state;
     const { handleShow, handleClose, handleChange, handleStatusChange, handleSubmit, handleEditTask, handleDeleteModal, handleDeleteTask } = this;
-    if (!taskLoaded) return <div><h1>loading...</h1></div>;
+    if (!taskLoaded) return <div className="lds-dual-ring"><h1>loading...</h1></div>;
     if (isEditing) {
       formTitle = 'Edit Task';
     }
