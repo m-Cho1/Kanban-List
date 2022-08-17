@@ -10,7 +10,7 @@ I thought that why don't I just create an application that creates a task, edit,
 
 So I proudly present Kanban-List! :smile:
 
-* Link to Kanban-List :point_right: https://tasks-kanban.herokuapp.com/#sign-in
+* Link to Kanban-List :point_right: https://tasks-kanban.herokuapp.com
 
 ## Technologies used
 
