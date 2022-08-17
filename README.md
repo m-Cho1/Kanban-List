@@ -1,7 +1,7 @@
 # Kanban-List :memo:
 
 A full stack JavaScript solo project.
-A web application for organizers who want to keep organize tasks.
+A web application for organizers who want to keep their tasks organized.
 
 ## Description
 I use notepad to write down daily tasks, weekly todos, or urgent tasks so that I don't forget.
