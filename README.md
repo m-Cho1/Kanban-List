@@ -75,22 +75,26 @@ Edit task feature :point_down:
   ```
   cp .env.example .env
   ```
-4. Import the example database.
+4. Create database
+  ```
+  createdb nameOfDatabase
+  ```
+5. Import the example database.
   ```
   npm run db:import
   ```
-5. Start the postgreSQL database server
+6. Start the postgreSQL database server
   ```
   sudo service postgresql start
   ```
-6. Launch pgweb postgreSQL database in the separate terminal
+7. Launch pgweb postgreSQL database in the separate terminal
   ```
   pgweb --db=myDatabase
   ```
   You can view database by opening http://localhost:8081 on your default browser.
   
-7. Start the project
+8. Start the project
   ```
   npm run dev
   ```
-8. Once started server, you can view the application by opening http://localhost:3000 in your browser
+9. Once started server, you can view the application by opening http://localhost:3000 in your browser
