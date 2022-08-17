@@ -77,7 +77,7 @@ Edit task feature :point_down:
   ```
 4. Import the example database.
   ```
-  npm rn db:import
+  npm run db:import
   ```
 5. Start the postgreSQL database server
   ```
