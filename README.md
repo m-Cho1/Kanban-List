@@ -83,8 +83,14 @@ Edit task feature :point_down:
   ```
   sudo service postgresql start
   ```
-6. Start the project
+6. Launch pgweb postgreSQL database in the separate terminal
+  ```
+  pgweb --db=myDatabase
+  ```
+  You can view database by opening http://localhost:8081 on your default browser.
+  
+7. Start the project
   ```
   npm run dev
   ```
-7. Once started server, you can view the application by opening http://localhost:3000 in your browser
+8. Once started server, you can view the application by opening http://localhost:3000 in your browser
