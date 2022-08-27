@@ -53,7 +53,7 @@ Edit task feature :point_down:
 ![final-project-feature5-update-task](https://user-images.githubusercontent.com/96744088/185204394-d3aa57be-09ef-42ef-a91a-652b72227a1b.gif)
 
 ## Stretch feature to implement
-* User set up an email reminder (Send Grid)
+* User can sort task by its status
 
 ## System Requirements
 * Node.js 10 or higher
