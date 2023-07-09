@@ -10,7 +10,9 @@ I thought that why don't I just create an application that creates a task, edit,
 
 So I proudly present Kanban-List! :smile:
 
-* Link to Kanban-List :point_right: https://kanban-list.minjijcho.com/
+* Live demo can be watched here! :point_right: https://youtu.be/H2VXj_vv9Vk
+* Live demo for creating a new user: 👉 https://youtu.be/KrSx8K_MwDQ
+
 
 ## Technologies used
 
@@ -41,7 +43,7 @@ So I proudly present Kanban-List! :smile:
 * User can sign in
 * User can sign out
 
-## Live Demo
+## Major features:
 
 Create a task feature :point_down:
 
